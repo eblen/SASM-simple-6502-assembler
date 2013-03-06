@@ -406,22 +406,21 @@ D0 #SUB_10 ; bne #SUB_10 ; always branch
 
 ; Digit shape maps
 @DIGIT_MAPS
-F6DF
-2492
-E7CF
-E79F
-B792
-F39F
-93DF
-E492
-F7DF
-F79F
+data  F6DF
+data  2492
+data  E7CF
+data  E79F
+data  B792
+data  F39F
+data  93DF
+data  E492
+data  F7DF
+data  F79F
 
 @KEY_COLORS
-55 ; number not in solution (sheep)
-BB ; number correct but in wrong plage (bull)
-11 ; number correct and in right place (cow)
-
+data  55 ; number not in solution (sheep)
+data  BB ; number correct but in wrong plage (bull)
+data  11 ; number correct and in right place (cow)
 
 @'AREG
 @'XREG
