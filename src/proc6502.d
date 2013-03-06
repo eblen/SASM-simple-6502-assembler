@@ -1,3 +1,4 @@
+import std.conv;
 import std.stdio;
 import std.string;
 
@@ -24,6 +25,7 @@ private struct opinfo
 // Main lookup tables
 private opflag[char] flagmap;
 private opinfo[string] infomap;
+private string[opcode] opcodemap;
 
 // Declaration of info struct for each 6502 instruction
 private opinfo adcinfo;
@@ -94,6 +96,7 @@ private opinfo tyainfo;
 class InvalidMnemonicException : Exception {this(string s) {super(s);}}
 class InvalidFlagException : InvalidMnemonicException {this(string s) {super(s);}}
 class InvalidInstrException : InvalidMnemonicException {this(string s) {super(s);}}
+class InvalidOpcodeException : Exception {this(string s) {super(s);}}
 
 // Return hex code as 2-character string for given mnemonic
 // Throws InvalidMnemonicException on bad input
@@ -146,6 +149,20 @@ public int numbytes(string mnemonic)
   }
 }
 
+// Return the mnemonic (such as "stazx") for the given opcode (such as 0x95)
+public string mnemonic(opcode oc)
+{
+  // Todo: opcode should be printed in hex
+  if (oc !in opcodemap) throw new InvalidOpcodeException("Invalid opcode " ~ to!string(oc));
+  return opcodemap[oc];
+}
+
+// TODO: See if there is an automatic way of doing this on program startup
+public void init6502()
+{
+  initopinfo();
+}
+
 // This function initializes all of the declared variables, including the entire instruction set, so it is very long...
 private void initopinfo()
 {
@@ -157,6 +174,159 @@ private void initopinfo()
     'n':INDIRECT,
     'x':XREG,
     'y':YREG
+  ];
+
+  opcodemap = 
+  [
+    0x69:"adci",
+    0x65:"adcz",
+    0x75:"adczx",
+    0x6D:"adca",
+    0x7D:"adcax",
+    0x79:"adcay",
+    0x61:"adcnx",
+    0x71:"adcny",
+    0x29:"andi",
+    0x25:"andz",
+    0x35:"andzx",
+    0x2D:"anda",
+    0x3D:"andax",
+    0x39:"anday",
+    0x21:"andnx",
+    0x31:"andny",
+    0x0A:"asl",
+    0x06:"aslz",
+    0x16:"aslzx",
+    0x0E:"asla",
+    0x1E:"aslax",
+    0x24:"bitz",
+    0x2C:"bita",
+    0x10:"bpl",
+    0x30:"bmi",
+    0x50:"bvc",
+    0x70:"bvs",
+    0x90:"bcc",
+    0xB0:"bcs",
+    0xD0:"bne",
+    0xF0:"beq",
+    0xC9:"cmpi",
+    0xC5:"cmpz",
+    0xD5:"cmpzx",
+    0xCD:"cmpa",
+    0xDD:"cmpax",
+    0xD9:"cmpay",
+    0xC1:"cmpnx",
+    0xD1:"cmpny",
+    0xE0:"cpxi",
+    0xE4:"cpxz",
+    0xEC:"cpxa",
+    0xC0:"cpyi",
+    0xC4:"cpyz",
+    0xCC:"cpya",
+    0xC6:"decz",
+    0xD6:"deczx",
+    0xCE:"deca",
+    0xDE:"decax",
+    0x49:"eori",
+    0x45:"eorz",
+    0x55:"eorzx",
+    0x4D:"eora",
+    0x5D:"eorax",
+    0x59:"eoray",
+    0x41:"eornx",
+    0x51:"eorny",
+    0x18:"clc",
+    0x38:"sec",
+    0x58:"cli",
+    0x78:"sei",
+    0xB8:"clv",
+    0xD8:"cld",
+    0xF8:"sed",
+    0xE6:"incz",
+    0xF6:"inczx",
+    0xEE:"inca",
+    0xFE:"incax",
+    0x4C:"jmpa",
+    0x6C:"jmpn",
+    0x20:"jsra",
+    0xA9:"ldai",
+    0xA5:"ldaz",
+    0xB5:"ldazx",
+    0xAD:"ldaa",
+    0xBD:"ldaax",
+    0xB9:"ldaay",
+    0xA1:"ldanx",
+    0xB1:"ldany",
+    0xA2:"ldxi",
+    0xA6:"ldxz",
+    0xB6:"ldxzy",
+    0xAE:"ldxa",
+    0xBE:"ldxay",
+    0xA0:"ldyi",
+    0xA4:"ldyz",
+    0xB4:"ldyzx",
+    0xAC:"ldya",
+    0xBC:"ldyax",
+    0x4A:"lsr",
+    0x46:"lsrz",
+    0x56:"lsrzx",
+    0x4E:"lsra",
+    0x5E:"lsrax",
+    0x09:"orai",
+    0x05:"oraz",
+    0x15:"orazx",
+    0x0D:"oraa",
+    0x1D:"oraax",
+    0x19:"oraay",
+    0x01:"oranx",
+    0x11:"orany",
+    0xAA:"tax",
+    0x8A:"txa",
+    0xCA:"dex",
+    0xE8:"inx",
+    0xA8:"tay",
+    0x98:"tya",
+    0x88:"dey",
+    0xC8:"iny",
+    0x2A:"rol",
+    0x26:"rolz",
+    0x36:"rolzx",
+    0x2E:"rola",
+    0x3E:"rolax",
+    0x6A:"ror",
+    0x66:"rorz",
+    0x76:"rorzx",
+    0x6E:"rora",
+    0x7E:"rorax",
+    0xE9:"sbci",
+    0xE5:"sbcz",
+    0xF5:"sbczx",
+    0xED:"sbca",
+    0xFD:"sbcax",
+    0xF9:"sbcay",
+    0xE1:"sbcnx",
+    0xF1:"sbcny",
+    0x85:"staz",
+    0x95:"stazx",
+    0x8D:"staa",
+    0x9D:"staax",
+    0x99:"staay",
+    0x81:"stanx",
+    0x91:"stany",
+    0x9A:"txs",
+    0xBA:"tsx",
+    0x48:"pha",
+    0x68:"pla",
+    0x08:"php",
+    0x28:"plp",
+    0x86:"stxz",
+    0x96:"stxzy",
+    0x8E:"stxa",
+    0x84:"styz",
+    0x94:"styzx",
+    0x8C:"stya",
+    0x40:"rti",
+    0x60:"rts"
   ];
 
   infomap =
