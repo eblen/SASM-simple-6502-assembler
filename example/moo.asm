@@ -1,5 +1,5 @@
 ; Moo Program for Apple II
-; Play a game of moo using lo-res graphics - entirely in machine language!
+; Play a game of moo using lo-res graphics
 
 zbyte shapemap0
 zbyte shapemap1
@@ -22,97 +22,97 @@ zbyte tmp1
 zbyte tmp0
 
 ; Initialization
-jsra  58fc ; jsr FC58 
-jsra  40fb ; jsr FB40 
+jsra  58fc
+jsra  40fb
 
 ; Set colors to 6
-ldxi  07 ; ldx #7
-ldai  66 ; lda #66
+ldxi  07
+ldai  66
 .init_color_value
-stazx .color ; sta &'COLOR,x
-dex   ; dex
-bpl   .init_color_value ; bpl #INIT_COLOR_VALUE
+stazx .color
+dex
+bpl   .init_color_value
 
 ; Random number seed
-ldaz  4f ; lda 4f
-staz  .random ; sta &'RANDOM
+ldaz  4f
+staz  .random
 
 ; Generate the number to guess
-ldxi  03 ; ldx #3
+ldxi  03
 .gen_digit
-jsra  .random_digit ; jsr &RANDOM_DIGIT
-stazx .digit ; sta &'DIGIT,x
-dex   ; dex
-bpl   .gen_digit ; bpl #GEN_DIGIT
+jsra  .random_digit
+stazx .digit
+dex
+bpl   .gen_digit
 
 ; Set initial positions and extents for digits
-ldai  11 ; lda #17
-staz  .row_limit ; sta &'ROW_LIMIT
-ldai  26 ; lda #38
-staz  .column_limit ; sta &'COLUMN_LIMIT
-ldxi  02 ; ldx #2
-ldyi  01 ; ldy #1
-ldai  00 ; lda 0
-staz  .digit_index ; sta &'DIGIT_INDEX
+ldai  11
+staz  .row_limit
+ldai  26
+staz  .column_limit
+ldxi  02
+ldyi  01
+ldai  00
+staz  .digit_index
 
 ; Main Loop
 .enter_digit
 ; Read keyboard input
 jsra  .save_regs
-jsra  35 fd ; jsr FD35 
-staz  .tmp0 ; sta &'TMP0
+jsra  35 fd 
+staz  .tmp0
 jsra  .restore_regs
-ldaz  .tmp0 ; lda &'TMP0
+ldaz  .tmp0
 
 ; Compute entered number (0-9)
-sec   ; sec
-sbci  b0 ; sbc $B0
+sec
+sbci  b0
 
 ; Compute key value - need to borrow A and X
 ; A contains entered digit - needed later.
 ; Two bits per key value as follows:
 ; cow: 11 bull: 10 sheep: 00
 jsra  .save_regs
-staz  .tmp0 ; sta &'TMP0 
+staz  .tmp0
 
 ; If we have a cow, rotate 1 into KEY
 ; Otherwise, rotate 0 into KEY
-ldaz  .digit_index ; lda &'DIGIT_INDEX
-andi  03 ; and %00000011
-tax   ; tax
-ldazx .digit ; lda &'DIGIT,x
-cmpz  .tmp0 ; cmp &'TMP0
-clc   ; clc
-bne   .no_cow ; bne #NO_COW
-sec   ; sec
+ldaz  .digit_index
+andi  03
+tax
+ldazx .digit
+cmpz  .tmp0
+clc
+bne   .no_cow
+sec
 .no_cow
-rorz  .key ; ror &'KEY
+rorz  .key
 
 ; Now look at other digits:
 ; if digit is found rotate a 1 into KEY
 ; otherwise rotate a 0 into KEY
-ldxi  03 ; ldx #3
+ldxi  03
 .digit_loop
-ldazx .digit ; lda &'DIGIT,x
-cmpz  .tmp0 ; cmp &'TMP0
-beq   .not_sheep ; beq #NOT_SHEEP
-dex   ; dex
-bpl   .digit_loop ; bpl #DIGIT_LOOP
-clc   ; clc
-bne   .is_sheep ; bne #IS_SHEEP
+ldazx .digit
+cmpz  .tmp0
+beq   .not_sheep
+dex
+bpl   .digit_loop
+clc
+bne   .is_sheep
 .not_sheep
-sec   ; sec
+sec
 .is_sheep
-rorz  .key ; ror &'KEY
-incz  .digit_index ; inc &'DIGIT_INDEX
+rorz  .key
+incz  .digit_index
 jsra  .restore_regs
 
 ; Compute correct map offset (2 * (entered number))
-asl   ; asl
+asl
 
 ; Store digit maps - need to borrow x
-stxz  .tmp0 ; stx &'TMP0
-tax   ; tax
+stxz  .tmp0
+tax
 ldaax .digit_maps ; lda &DIGIT_MAPS,x
 staz  .shapemap0 ; sta &'SHAPEMAP0
 inx   ; inx
