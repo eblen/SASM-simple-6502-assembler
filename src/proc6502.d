@@ -15,6 +15,8 @@ const opflag INDIRECT  = 0b10000000;
 const opflag XREG      = 0b00000001;
 const opflag YREG      = 0b00000010;
 
+enum ADDR_TYPE {ABS, IND, NONE, REL, ZP}
+
 // Main struct for storing numerical encodings for instructions and their flags
 private struct opinfo
 {
@@ -129,6 +131,24 @@ public string hexcode(string mnemonic)
   string retVal;
   writefln(retVal, "%2X", info.codemap[flag]);
   return retVal;
+}
+
+// Return address type of the given mnemonic
+public ADDR_TYPE addrtype(string mnemonic)
+{
+  if (mnemonic.length < 3) throw new InvalidMnemonicException("Mnemonic too short " ~ mnemonic);
+  if (mnemonic.length > 5) throw new InvalidMnemonicException("Mnemonic too long " ~ mnemonic);
+  string mnem = mnemonic.toLower();
+  if (mnem[0] == 'b' && mnem != "bit" && mnem != "brk") return ADDR_TYPE.REL;
+  if (mnem.length < 4) return ADDR_TYPE.NONE;
+  switch(mnem[3])
+  {
+    case 'i': return ADDR_TYPE.NONE;
+    case 'z': return ADDR_TYPE.ZP;
+    case 'a': return ADDR_TYPE.ABS;
+    case 'n': return ADDR_TYPE.IND;
+    default: throw new InvalidFlagException("Invalid Flag " ~ mnem[3]);
+  }
 }
 
 // Return size of encoding for given mnemonic
