@@ -3,10 +3,20 @@ import std.conv;
 import std.stdio;
 import std.string;
 import proc6502;
+import zpm;
 
 class InvalidHexNumberException : Exception {this(string hex) {super("Invalid hex number: " ~ hex);}}
 
 static ubyte[char] hex2val;
+
+ubyte hexToByte(string hex)
+{
+  if (hex.length != 2) throw new InvalidHexNumberException(to!string(hex));
+  char hex_char[2];
+  hex_char[0] = hex[0];
+  hex_char[1] = hex[1];
+  return hexToByte(hex_char);
+}
 
 ubyte hexToByte(const char[2] hex)
 {
@@ -37,7 +47,13 @@ void main()
   ];
 
   int line_num = 1;
+  ushort org = 2560;
   ubyte[] machine_code;
+  ushort[string] labelToAddr;
+  string[ushort] absAddrRef;
+  string[ushort] relAddrRef;
+  string[ushort] zpAddrRef;
+  SimpleAppleIIZeroPageManager zpm;
 
   init6502();
   foreach(char[] line; stdin.byLine())
@@ -48,34 +64,101 @@ void main()
     auto cbegin = indexOf(line, ';');
     if (cbegin > -1) line = line[0..cbegin];
 
-    // Split into tokens
+    // Create tokens: mnemonic op1 op2
     char[][] parts = std.string.split(line);
     if (parts.length == 0) continue;
-    if (parts.length == 1)
-    {
-      writefln("Error at line %s: Single token not allowed", line_num);
-      exit(1);
-    }
 
     string mnemonic = to!string(toLower(parts[0]));
-    string ops = to!string(toLower(parts[1]));
-    switch(mnemonic)
+    string op1 = "";
+    if (parts.length > 1) op1 = to!string(toLower(parts[1]));
+    string op2 = "";
+    if (parts.length > 2) op2 = to!string(toLower(parts[2]));
+
+    // Start processing line
+
+    // Raw data
+    if (mnemonic == "data")
     {
-      case "data":
-        if (ops.length / 2 == 1)
+      if (op1.length / 2 == 1)
+      {
+        writefln("Invalid data at line %s", line_num);
+        exit(1);
+      }
+      for (int i=0; i<op1.length; i += 2)
+      {
+        machine_code ~= hexToByte(op1[i..i+2]);
+      }
+    }
+
+    // Request for zbyte
+    else if (mnemonic == "zbyte")
+    {
+      ubyte alloc_size = 1;
+      if (op1 == "")
+      {
+        writefln("Error - zbyte without arguments at line %s", line_num);
+        exit(1);
+      }
+      if (op2 != "") alloc_size = to!ubyte(op2);
+      labelToAddr[op1] = zpm.alloc(alloc_size);
+    }
+
+    // Label
+    else if (mnemonic[0] == '.') labelToAddr[mnemonic[1..$]] = cast(ushort)(org + machine_code.length);
+
+    // Instruction
+    else
+    {
+      machine_code ~= proc6502.hexcode(mnemonic);
+
+      // op1 is either absent or not a label
+      if (op1 == "" || op1[0] != '.')
+      {
+        if (op1.length != 2*(proc6502.numbytes(mnemonic)-1))
         {
-          writefln("Invalid data at line %s", line_num);
+          writefln("Error - wrong instruction length at line %s", line_num);
           exit(1);
         }
-        for (int i=0; i<ops.length; i += 2)
+        for (int i=0; i<op1.length; i += 2)
         {
-          char[2] hex;
-          hex[0] = ops[i];
-          hex[1] = ops[i+1];
-          machine_code ~= hexToByte(hex);
+          machine_code ~= hexToByte(op1[i..i+2]);
         }
+      }
+
+      // op1 is a label
+      // TODO: Handle indirect offsets
+      else
+      {
+        auto codeIndex = cast(ushort)(machine_code.length);
+        string label = op1[1..$];
+        final switch(proc6502.addrtype(mnemonic))
+        {
+          case ADDR_TYPE.ABS:
+            absAddrRef[codeIndex] = label;
+            machine_code ~= 0;
+            machine_code ~= 0;
+            break;
+          case ADDR_TYPE.IND:
+            writefln("Error - indirect addressing mode not yet supported at line %s", line_num);
+            exit(1);
+            break;
+          case ADDR_TYPE.NONE:
+            writefln("Error - label not applicable for instruction at line %s", line_num);
+            exit(1);
+            break;
+          case ADDR_TYPE.REL:
+            relAddrRef[codeIndex] = label;
+            machine_code ~= 0;
+            break;
+          case ADDR_TYPE.ZP:
+            zpAddrRef[codeIndex] = label;
+            machine_code ~= 0;
+            break;
+        }
+      }
     }
   }
 
+  // TODO: Post-processing to insert address references into machine code.
   writeln(machine_code);
 }
