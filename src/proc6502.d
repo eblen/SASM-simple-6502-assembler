@@ -349,6 +349,437 @@ private void initopinfo()
     0x60:"rts"
   ];
 
+  adcinfo = opinfo(
+  "adc",
+  [
+    IMMEDIATE:0x69,
+    ZEROPAGE:0x65,
+    ZEROPAGE | XREG:0x75,
+    ABSOLUTE:0x6D,
+    ABSOLUTE | XREG:0x7D,
+    ABSOLUTE | YREG:0x79,
+    INDIRECT | XREG:0x61,
+    INDIRECT | YREG:0x71,
+  ]);
+
+  andinfo = opinfo(
+  "and",
+  [
+    IMMEDIATE:0x29,
+    ZEROPAGE:0x25,
+    ZEROPAGE | XREG:0x35,
+    ABSOLUTE:0x2D,
+    ABSOLUTE | XREG:0x3D,
+    ABSOLUTE | YREG:0x39,
+    INDIRECT | XREG:0x21,
+    INDIRECT | YREG:0x31,
+  ]);
+
+  aslinfo = opinfo(
+  "asl",
+  [
+    NOFLAGS:0x0A,
+    ZEROPAGE:0x06,
+    ZEROPAGE | XREG:0x16,
+    ABSOLUTE:0x0E,
+    ABSOLUTE | XREG:0x1E,
+  ]);
+
+  bitinfo = opinfo(
+  "bit",
+  [
+    ZEROPAGE:0x24,
+    ABSOLUTE:0x2C,
+  ]);
+
+  bplinfo = opinfo(
+  "bpl",
+  [
+    NOFLAGS:0x10,
+  ]);
+
+  bmiinfo = opinfo(
+  "bmi",
+  [
+    NOFLAGS:0x30,
+  ]);
+
+  bvcinfo = opinfo(
+  "bvc",
+  [
+    NOFLAGS:0x50,
+  ]);
+
+  bvsinfo = opinfo(
+  "bvs",
+  [
+    NOFLAGS:0x70,
+  ]);
+
+  bccinfo = opinfo(
+  "bcc",
+  [
+    NOFLAGS:0x90,
+  ]);
+
+  bcsinfo = opinfo(
+  "bcs",
+  [
+    NOFLAGS:0xB0,
+  ]);
+
+  bneinfo = opinfo(
+  "bne",
+  [
+    NOFLAGS:0xD0,
+  ]);
+
+  beqinfo = opinfo(
+  "beq",
+  [
+    NOFLAGS:0xF0,
+  ]);
+
+  brkinfo = opinfo(
+  "brk",
+  [
+    NOFLAGS:0x00,
+  ]);
+
+  cmpinfo = opinfo(
+  "cmp",
+  [
+    IMMEDIATE:0xC9,
+    ZEROPAGE:0xC5,
+    ZEROPAGE | XREG:0xD5,
+    ABSOLUTE:0xCD,
+    ABSOLUTE | XREG:0xDD,
+    ABSOLUTE | YREG:0xD9,
+    INDIRECT | XREG:0xC1,
+    INDIRECT | YREG:0xD1,
+  ]);
+
+  cpxinfo = opinfo(
+  "cpx",
+  [
+    IMMEDIATE:0xE0,
+    ZEROPAGE:0xE4,
+    ABSOLUTE:0xEC,
+  ]);
+
+  cpyinfo = opinfo(
+  "cpy",
+  [
+    IMMEDIATE:0xC0,
+    ZEROPAGE:0xC4,
+    ABSOLUTE:0xCC,
+  ]);
+
+  decinfo = opinfo(
+  "dec",
+  [
+    ZEROPAGE:0xC6,
+    ZEROPAGE | XREG:0xD6,
+    ABSOLUTE:0xCE,
+    ABSOLUTE | XREG:0xDE,
+  ]);
+
+  eorinfo = opinfo(
+  "eor",
+  [
+    IMMEDIATE:0x49,
+    ZEROPAGE:0x45,
+    ZEROPAGE | XREG:0x55,
+    ABSOLUTE:0x4D,
+    ABSOLUTE | XREG:0x5D,
+    ABSOLUTE | YREG:0x59,
+    INDIRECT | XREG:0x41,
+    INDIRECT | YREG:0x51,
+  ]);
+
+  clcinfo = opinfo(
+  "clc",
+  [
+    NOFLAGS:0x18,
+  ]);
+
+  secinfo = opinfo(
+  "sec",
+  [
+    NOFLAGS:0x38,
+  ]);
+
+  cliinfo = opinfo(
+  "cli",
+  [
+    NOFLAGS:0x58,
+  ]);
+
+  seiinfo = opinfo(
+  "sei",
+  [
+    NOFLAGS:0x78,
+  ]);
+
+  clvinfo = opinfo(
+  "clv",
+  [
+    NOFLAGS:0xB8,
+  ]);
+
+  cldinfo = opinfo(
+  "cld",
+  [
+    NOFLAGS:0xD8,
+  ]);
+
+  sedinfo = opinfo(
+  "sed",
+  [
+    NOFLAGS:0xF8,
+  ]);
+
+  incinfo = opinfo(
+  "inc",
+  [
+    ZEROPAGE:0xE6,
+    ZEROPAGE | XREG:0xF6,
+    ABSOLUTE:0xEE,
+    ABSOLUTE | XREG:0xFE,
+  ]);
+
+  jmpinfo = opinfo(
+  "jmp",
+  [
+    ABSOLUTE:0x4C,
+    INDIRECT:0x6C,
+  ]);
+
+  jsrinfo = opinfo(
+  "jsr",
+  [
+    ABSOLUTE:0x20,
+  ]);
+
+  ldainfo = opinfo(
+  "lda",
+  [
+    IMMEDIATE:0xA9,
+    ZEROPAGE:0xA5,
+    ZEROPAGE | XREG:0xB5,
+    ABSOLUTE:0xAD,
+    ABSOLUTE | XREG:0xBD,
+    ABSOLUTE | YREG:0xB9,
+    INDIRECT | XREG:0xA1,
+    INDIRECT | YREG:0xB1,
+  ]);
+
+  ldxinfo = opinfo(
+  "ldx",
+  [
+    IMMEDIATE:0xA2,
+    ZEROPAGE:0xA6,
+    ZEROPAGE | YREG:0xB6,
+    ABSOLUTE:0xAE,
+    ABSOLUTE | YREG:0xBE,
+  ]);
+
+  ldyinfo = opinfo(
+  "ldy",
+  [
+    IMMEDIATE:0xA0,
+    ZEROPAGE:0xA4,
+    ZEROPAGE | XREG:0xB4,
+    ABSOLUTE:0xAC,
+    ABSOLUTE | XREG:0xBC,
+  ]);
+
+  lsrinfo = opinfo(
+  "lsr",
+  [
+    NOFLAGS:0x4A,
+    ZEROPAGE:0x46,
+    ZEROPAGE | XREG:0x56,
+    ABSOLUTE:0x4E,
+    ABSOLUTE | XREG:0x5E,
+  ]);
+
+  nopinfo = opinfo(
+  "nop",
+  [
+    NOFLAGS:0xEA,
+  ]);
+
+  orainfo = opinfo(
+  "ora",
+  [
+    IMMEDIATE:0x09,
+    ZEROPAGE:0x05,
+    ZEROPAGE | XREG:0x15,
+    ABSOLUTE:0x0D,
+    ABSOLUTE | XREG:0x1D,
+    ABSOLUTE | YREG:0x19,
+    INDIRECT | XREG:0x01,
+    INDIRECT | YREG:0x11,
+  ]);
+
+  taxinfo = opinfo(
+  "tax",
+  [
+    NOFLAGS:0xAA,
+  ]);
+
+  txainfo = opinfo(
+  "txa",
+  [
+    NOFLAGS:0x8A,
+  ]);
+
+  dexinfo = opinfo(
+  "dex",
+  [
+    NOFLAGS:0xCA,
+  ]);
+
+  inxinfo = opinfo(
+  "inx",
+  [
+    NOFLAGS:0xE8,
+  ]);
+
+  tayinfo = opinfo(
+  "tay",
+  [
+    NOFLAGS:0xA8,
+  ]);
+
+  tyainfo = opinfo(
+  "tya",
+  [
+    NOFLAGS:0x98,
+  ]);
+
+  deyinfo = opinfo(
+  "dey",
+  [
+    NOFLAGS:0x88,
+  ]);
+
+  inyinfo = opinfo(
+  "iny",
+  [
+    NOFLAGS:0xC8,
+  ]);
+
+  rolinfo = opinfo(
+  "rol",
+  [
+    NOFLAGS:0x2A,
+    ZEROPAGE:0x26,
+    ZEROPAGE | XREG:0x36,
+    ABSOLUTE:0x2E,
+    ABSOLUTE | XREG:0x3E,
+  ]);
+
+  rorinfo = opinfo(
+  "ror",
+  [
+    NOFLAGS:0x6A,
+    ZEROPAGE:0x66,
+    ZEROPAGE | XREG:0x76,
+    ABSOLUTE:0x6E,
+    ABSOLUTE | XREG:0x7E,
+  ]);
+
+  rtiinfo = opinfo(
+  "rti",
+  [
+    NOFLAGS:0x40,
+  ]);
+
+  rtsinfo = opinfo(
+  "rts",
+  [
+    NOFLAGS:0x60,
+  ]);
+
+  sbcinfo = opinfo(
+  "sbc",
+  [
+    IMMEDIATE:0xE9,
+    ZEROPAGE:0xE5,
+    ZEROPAGE | XREG:0xF5,
+    ABSOLUTE:0xED,
+    ABSOLUTE | XREG:0xFD,
+    ABSOLUTE | YREG:0xF9,
+    INDIRECT | XREG:0xE1,
+    INDIRECT | YREG:0xF1,
+  ]);
+
+  stainfo = opinfo(
+  "sta",
+  [
+    ZEROPAGE:0x85,
+    ZEROPAGE | XREG:0x95,
+    ABSOLUTE:0x8D,
+    ABSOLUTE | XREG:0x9D,
+    ABSOLUTE | YREG:0x99,
+    INDIRECT | XREG:0x81,
+    INDIRECT | YREG:0x91,
+  ]);
+
+  txsinfo = opinfo(
+  "txs",
+  [
+    NOFLAGS:0x9A,
+  ]);
+
+  tsxinfo = opinfo(
+  "tsx",
+  [
+    NOFLAGS:0xBA,
+  ]);
+
+  phainfo = opinfo(
+  "pha",
+  [
+    NOFLAGS:0x48,
+  ]);
+
+  plainfo = opinfo(
+  "pla",
+  [
+    NOFLAGS:0x68,
+  ]);
+
+  phpinfo = opinfo(
+  "php",
+  [
+    NOFLAGS:0x08,
+  ]);
+
+  plpinfo = opinfo(
+  "plp",
+  [
+    NOFLAGS:0x28,
+  ]);
+
+  stxinfo = opinfo(
+  "stx",
+  [
+    ZEROPAGE:0x86,
+    ZEROPAGE | YREG:0x96,
+    ABSOLUTE:0x8E,
+  ]);
+
+  styinfo = opinfo(
+  "sty",
+  [
+    ZEROPAGE:0x84,
+    ZEROPAGE | XREG:0x94,
+    ABSOLUTE:0x8C,
+  ]);
+
   infomap =
   [
    "adc":adcinfo,
@@ -408,435 +839,4 @@ private void initopinfo()
    "stx":stxinfo,
    "sty":styinfo
   ];
-
-  opinfo adcinfo = opinfo(
-  "adc",
-  [
-    IMMEDIATE:0x69,
-    ZEROPAGE:0x65,
-    ZEROPAGE | XREG:0x75,
-    ABSOLUTE:0x6D,
-    ABSOLUTE | XREG:0x7D,
-    ABSOLUTE | YREG:0x79,
-    INDIRECT | XREG:0x61,
-    INDIRECT | YREG:0x71,
-  ]);
-
-  opinfo andinfo = opinfo(
-  "and",
-  [
-    IMMEDIATE:0x29,
-    ZEROPAGE:0x25,
-    ZEROPAGE | XREG:0x35,
-    ABSOLUTE:0x2D,
-    ABSOLUTE | XREG:0x3D,
-    ABSOLUTE | YREG:0x39,
-    INDIRECT | XREG:0x21,
-    INDIRECT | YREG:0x31,
-  ]);
-
-  opinfo aslinfo = opinfo(
-  "asl",
-  [
-    NOFLAGS:0x0A,
-    ZEROPAGE:0x06,
-    ZEROPAGE | XREG:0x16,
-    ABSOLUTE:0x0E,
-    ABSOLUTE | XREG:0x1E,
-  ]);
-
-  opinfo bitinfo = opinfo(
-  "bit",
-  [
-    ZEROPAGE:0x24,
-    ABSOLUTE:0x2C,
-  ]);
-
-  opinfo bplinfo = opinfo(
-  "bpl",
-  [
-    NOFLAGS:0x10,
-  ]);
-
-  opinfo bmiinfo = opinfo(
-  "bmi",
-  [
-    NOFLAGS:0x30,
-  ]);
-
-  opinfo bvcinfo = opinfo(
-  "bvc",
-  [
-    NOFLAGS:0x50,
-  ]);
-
-  opinfo bvsinfo = opinfo(
-  "bvs",
-  [
-    NOFLAGS:0x70,
-  ]);
-
-  opinfo bccinfo = opinfo(
-  "bcc",
-  [
-    NOFLAGS:0x90,
-  ]);
-
-  opinfo bcsinfo = opinfo(
-  "bcs",
-  [
-    NOFLAGS:0xB0,
-  ]);
-
-  opinfo bneinfo = opinfo(
-  "bne",
-  [
-    NOFLAGS:0xD0,
-  ]);
-
-  opinfo beqinfo = opinfo(
-  "beq",
-  [
-    NOFLAGS:0xF0,
-  ]);
-
-  opinfo brkinfo = opinfo(
-  "brk",
-  [
-    NOFLAGS:0x00,
-  ]);
-
-  opinfo cmpinfo = opinfo(
-  "cmp",
-  [
-    IMMEDIATE:0xC9,
-    ZEROPAGE:0xC5,
-    ZEROPAGE | XREG:0xD5,
-    ABSOLUTE:0xCD,
-    ABSOLUTE | XREG:0xDD,
-    ABSOLUTE | YREG:0xD9,
-    INDIRECT | XREG:0xC1,
-    INDIRECT | YREG:0xD1,
-  ]);
-
-  opinfo cpxinfo = opinfo(
-  "cpx",
-  [
-    IMMEDIATE:0xE0,
-    ZEROPAGE:0xE4,
-    ABSOLUTE:0xEC,
-  ]);
-
-  opinfo cpyinfo = opinfo(
-  "cpy",
-  [
-    IMMEDIATE:0xC0,
-    ZEROPAGE:0xC4,
-    ABSOLUTE:0xCC,
-  ]);
-
-  opinfo decinfo = opinfo(
-  "dec",
-  [
-    ZEROPAGE:0xC6,
-    ZEROPAGE | XREG:0xD6,
-    ABSOLUTE:0xCE,
-    ABSOLUTE | XREG:0xDE,
-  ]);
-
-  opinfo eorinfo = opinfo(
-  "eor",
-  [
-    IMMEDIATE:0x49,
-    ZEROPAGE:0x45,
-    ZEROPAGE | XREG:0x55,
-    ABSOLUTE:0x4D,
-    ABSOLUTE | XREG:0x5D,
-    ABSOLUTE | YREG:0x59,
-    INDIRECT | XREG:0x41,
-    INDIRECT | YREG:0x51,
-  ]);
-
-  opinfo clcinfo = opinfo(
-  "clc",
-  [
-    NOFLAGS:0x18,
-  ]);
-
-  opinfo secinfo = opinfo(
-  "sec",
-  [
-    NOFLAGS:0x38,
-  ]);
-
-  opinfo cliinfo = opinfo(
-  "cli",
-  [
-    NOFLAGS:0x58,
-  ]);
-
-  opinfo seiinfo = opinfo(
-  "sei",
-  [
-    NOFLAGS:0x78,
-  ]);
-
-  opinfo clvinfo = opinfo(
-  "clv",
-  [
-    NOFLAGS:0xB8,
-  ]);
-
-  opinfo cldinfo = opinfo(
-  "cld",
-  [
-    NOFLAGS:0xD8,
-  ]);
-
-  opinfo sedinfo = opinfo(
-  "sed",
-  [
-    NOFLAGS:0xF8,
-  ]);
-
-  opinfo incinfo = opinfo(
-  "inc",
-  [
-    ZEROPAGE:0xE6,
-    ZEROPAGE | XREG:0xF6,
-    ABSOLUTE:0xEE,
-    ABSOLUTE | XREG:0xFE,
-  ]);
-
-  opinfo jmpinfo = opinfo(
-  "jmp",
-  [
-    ABSOLUTE:0x4C,
-    INDIRECT:0x6C,
-  ]);
-
-  opinfo jsrinfo = opinfo(
-  "jsr",
-  [
-    ABSOLUTE:0x20,
-  ]);
-
-  opinfo ldainfo = opinfo(
-  "lda",
-  [
-    IMMEDIATE:0xA9,
-    ZEROPAGE:0xA5,
-    ZEROPAGE | XREG:0xB5,
-    ABSOLUTE:0xAD,
-    ABSOLUTE | XREG:0xBD,
-    ABSOLUTE | YREG:0xB9,
-    INDIRECT | XREG:0xA1,
-    INDIRECT | YREG:0xB1,
-  ]);
-
-  opinfo ldxinfo = opinfo(
-  "ldx",
-  [
-    IMMEDIATE:0xA2,
-    ZEROPAGE:0xA6,
-    ZEROPAGE | YREG:0xB6,
-    ABSOLUTE:0xAE,
-    ABSOLUTE | YREG:0xBE,
-  ]);
-
-  opinfo ldyinfo = opinfo(
-  "ldy",
-  [
-    IMMEDIATE:0xA0,
-    ZEROPAGE:0xA4,
-    ZEROPAGE | XREG:0xB4,
-    ABSOLUTE:0xAC,
-    ABSOLUTE | XREG:0xBC,
-  ]);
-
-  opinfo lsrinfo = opinfo(
-  "lsr",
-  [
-    NOFLAGS:0x4A,
-    ZEROPAGE:0x46,
-    ZEROPAGE | XREG:0x56,
-    ABSOLUTE:0x4E,
-    ABSOLUTE | XREG:0x5E,
-  ]);
-
-  opinfo nopinfo = opinfo(
-  "nop",
-  [
-    NOFLAGS:0xEA,
-  ]);
-
-  opinfo orainfo = opinfo(
-  "ora",
-  [
-    IMMEDIATE:0x09,
-    ZEROPAGE:0x05,
-    ZEROPAGE | XREG:0x15,
-    ABSOLUTE:0x0D,
-    ABSOLUTE | XREG:0x1D,
-    ABSOLUTE | YREG:0x19,
-    INDIRECT | XREG:0x01,
-    INDIRECT | YREG:0x11,
-  ]);
-
-  opinfo taxinfo = opinfo(
-  "tax",
-  [
-    NOFLAGS:0xAA,
-  ]);
-
-  opinfo txainfo = opinfo(
-  "txa",
-  [
-    NOFLAGS:0x8A,
-  ]);
-
-  opinfo dexinfo = opinfo(
-  "dex",
-  [
-    NOFLAGS:0xCA,
-  ]);
-
-  opinfo inxinfo = opinfo(
-  "inx",
-  [
-    NOFLAGS:0xE8,
-  ]);
-
-  opinfo tayinfo = opinfo(
-  "tay",
-  [
-    NOFLAGS:0xA8,
-  ]);
-
-  opinfo tyainfo = opinfo(
-  "tya",
-  [
-    NOFLAGS:0x98,
-  ]);
-
-  opinfo deyinfo = opinfo(
-  "dey",
-  [
-    NOFLAGS:0x88,
-  ]);
-
-  opinfo inyinfo = opinfo(
-  "iny",
-  [
-    NOFLAGS:0xC8,
-  ]);
-
-  opinfo rolinfo = opinfo(
-  "rol",
-  [
-    NOFLAGS:0x2A,
-    ZEROPAGE:0x26,
-    ZEROPAGE | XREG:0x36,
-    ABSOLUTE:0x2E,
-    ABSOLUTE | XREG:0x3E,
-  ]);
-
-  opinfo rorinfo = opinfo(
-  "ror",
-  [
-    NOFLAGS:0x6A,
-    ZEROPAGE:0x66,
-    ZEROPAGE | XREG:0x76,
-    ABSOLUTE:0x6E,
-    ABSOLUTE | XREG:0x7E,
-  ]);
-
-  opinfo rtiinfo = opinfo(
-  "rti",
-  [
-    NOFLAGS:0x40,
-  ]);
-
-  opinfo rtsinfo = opinfo(
-  "rts",
-  [
-    NOFLAGS:0x60,
-  ]);
-
-  opinfo sbcinfo = opinfo(
-  "sbc",
-  [
-    IMMEDIATE:0xE9,
-    ZEROPAGE:0xE5,
-    ZEROPAGE | XREG:0xF5,
-    ABSOLUTE:0xED,
-    ABSOLUTE | XREG:0xFD,
-    ABSOLUTE | YREG:0xF9,
-    INDIRECT | XREG:0xE1,
-    INDIRECT | YREG:0xF1,
-  ]);
-
-  opinfo stainfo = opinfo(
-  "sta",
-  [
-    ZEROPAGE:0x85,
-    ZEROPAGE | XREG:0x95,
-    ABSOLUTE:0x8D,
-    ABSOLUTE | XREG:0x9D,
-    ABSOLUTE | YREG:0x99,
-    INDIRECT | XREG:0x81,
-    INDIRECT | YREG:0x91,
-  ]);
-
-  opinfo txsinfo = opinfo(
-  "txs",
-  [
-    NOFLAGS:0x9A,
-  ]);
-
-  opinfo tsxinfo = opinfo(
-  "tsx",
-  [
-    NOFLAGS:0xBA,
-  ]);
-
-  opinfo phainfo = opinfo(
-  "pha",
-  [
-    NOFLAGS:0x48,
-  ]);
-
-  opinfo plainfo = opinfo(
-  "pla",
-  [
-    NOFLAGS:0x68,
-  ]);
-
-  opinfo phpinfo = opinfo(
-  "php",
-  [
-    NOFLAGS:0x08,
-  ]);
-
-  opinfo plpinfo = opinfo(
-  "plp",
-  [
-    NOFLAGS:0x28,
-  ]);
-
-  opinfo stxinfo = opinfo(
-  "stx",
-  [
-    ZEROPAGE:0x86,
-    ZEROPAGE | YREG:0x96,
-    ABSOLUTE:0x8E,
-  ]);
-
-  opinfo styinfo = opinfo(
-  "sty",
-  [
-    ZEROPAGE:0x84,
-    ZEROPAGE | XREG:0x94,
-    ABSOLUTE:0x8C,
-  ]);
 }
