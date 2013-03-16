@@ -53,7 +53,7 @@ void main()
   string[ushort] absAddrRef;
   string[ushort] relAddrRef;
   string[ushort] zpAddrRef;
-  SimpleAppleIIZeroPageManager zpm;
+  auto zpm = new SimpleAppleIIZeroPageManager();
 
   init6502();
   foreach(char[] line; stdin.byLine())
@@ -67,7 +67,6 @@ void main()
     // Create tokens: mnemonic op1 op2
     char[][] parts = std.string.split(line);
     if (parts.length == 0) continue;
-
     string mnemonic = to!string(toLower(parts[0]));
     string op1 = "";
     if (parts.length > 1) op1 = to!string(toLower(parts[1]));
@@ -79,7 +78,7 @@ void main()
     // Raw data
     if (mnemonic == "data")
     {
-      if (op1.length / 2 == 1)
+      if (op1.length % 2 == 1)
       {
         writefln("Invalid data at line %s", line_num);
         exit(1);
@@ -129,7 +128,7 @@ void main()
       // TODO: Handle indirect offsets
       else
       {
-        auto codeIndex = cast(ushort)(machine_code.length);
+        ushort codeIndex = cast(ushort)(machine_code.length);
         string label = op1[1..$];
         final switch(proc6502.addrtype(mnemonic))
         {
@@ -159,6 +158,46 @@ void main()
     }
   }
 
-  // TODO: Post-processing to insert address references into machine code.
+  // Insert address values
+
+  // Absolute addresses
+  foreach (codeIndex, label; absAddrRef)
+  {
+    if (label !in labelToAddr)
+    {
+      writefln("Undefined absolute address label: %s", label);
+      exit(1);
+    }
+    ushort addr = labelToAddr[label];
+    machine_code[codeIndex] = cast(ubyte)(addr >> 8);
+    machine_code[codeIndex+1] = cast(ubyte)(addr & 0x00FF);
+  }
+
+  // Relative branch offsets
+  foreach (codeIndex, label; relAddrRef)
+  {
+    if (label !in labelToAddr)
+    {
+      writefln("Undefined branching label: %s", label);
+      exit(1);
+    }
+    ushort addr = labelToAddr[label];
+    int offset = addr - (org + codeIndex);
+    assert((offset >= -128) && (offset <= 127));
+    machine_code[codeIndex] = cast(ubyte)offset;
+  }
+
+  // Zero page addresses
+  foreach (codeIndex, label; zpAddrRef)
+  {
+    if (label !in labelToAddr)
+    {
+      writefln("Undefined zero page address label: %s", label);
+      exit(1);
+    }
+    ushort addr = labelToAddr[label];
+    assert(addr < 256);
+    machine_code[codeIndex] = cast(ubyte)addr;
+  }
   writeln(machine_code);
 }
