@@ -5,8 +5,8 @@ zbyte shapemap0
 zbyte shapemap1
 zbyte row_limit
 zbyte column_limit
-zbyte color,8
-zbyte digit,4
+zbyte color 8
+zbyte digit 4
 zbyte digit_index ; Indicated by bits 0 and 1 - ignore 2-7
 zbyte key
 zbyte random
@@ -59,7 +59,7 @@ staz  .digit_index
 .enter_digit
 ; Read keyboard input
 jsra  .save_regs
-jsra  35 fd 
+jsra  35fd
 staz  .tmp0
 jsra  .restore_regs
 ldaz  .tmp0
