@@ -129,7 +129,7 @@ public string hexcode(string mnemonic)
   }
 
   string retVal;
-  writefln(retVal, "%2X", info.codemap[flag]);
+  writef(retVal, "%2X", info.codemap[flag]);
   return retVal;
 }
 
