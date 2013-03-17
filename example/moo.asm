@@ -1,6 +1,8 @@
 ; Moo Program for Apple II
 ; Play a game of moo using lo-res graphics
 
+org a00
+
 zbyte shapemap0
 zbyte shapemap1
 zbyte row_limit

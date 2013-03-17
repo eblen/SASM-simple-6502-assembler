@@ -8,6 +8,7 @@ import zpm;
 class InvalidHexNumberException : Exception {this(string hex) {super("Invalid hex number: " ~ hex);}}
 
 static ubyte[char] hex2val;
+static char[ubyte] val2hex;
 
 ubyte hexToByte(string hex)
 {
@@ -22,6 +23,15 @@ ubyte hexToByte(const char[2] hex)
 {
   if (hex[0] !in hex2val || hex[1] !in hex2val) throw new InvalidHexNumberException(to!string(hex));
   return cast(ubyte)(16*hex2val[hex[0]] + hex2val[hex[1]]);
+}
+
+string byteToHex(ubyte b)
+{
+  char[2] hex;
+
+  hex[0] = val2hex[b >> 4];
+  hex[1] = val2hex[b & 0x0F];
+  return to!string(hex);
 }
 
 void main()
@@ -46,8 +56,28 @@ void main()
     'f':15,
   ];
 
+  val2hex =
+  [
+    0:'0',
+    1:'1',
+    2:'2',
+    3:'3',
+    4:'4',
+    5:'5',
+    6:'6',
+    7:'7',
+    8:'8',
+    9:'9',
+    10:'a',
+    11:'b',
+    12:'c',
+    13:'d',
+    14:'e',
+    15:'f',
+  ];
+
   int line_num = 1;
-  ushort org = 2560;
+  ushort org = 0;
   ubyte[] machine_code;
   ushort[string] labelToAddr;
   string[ushort] absAddrRef;
@@ -75,8 +105,20 @@ void main()
 
     // Start processing line
 
+    // org - specify address where program will be loaded
+    if (mnemonic == "org")
+    {
+      if (op1.length < 1 || op1.length > 4)
+      {
+        writefln("Invalid org address at line %s", line_num);
+        exit(1);
+      }
+      while (op1.length < 4) op1 = "0" ~ op1;
+      org = 256*hexToByte(op1[0..2]) + hexToByte(op1[2..$]);
+    }
+
     // Raw data
-    if (mnemonic == "data")
+    else if (mnemonic == "data")
     {
       if (op1.length % 2 == 1)
       {
@@ -108,7 +150,7 @@ void main()
     // Instruction
     else
     {
-      machine_code ~= proc6502.hexcode(mnemonic);
+      machine_code ~= proc6502.bytecode(mnemonic);
 
       // op1 is either absent or not a label
       if (op1 == "" || op1[0] != '.')
@@ -169,8 +211,9 @@ void main()
       exit(1);
     }
     ushort addr = labelToAddr[label];
-    machine_code[codeIndex] = cast(ubyte)(addr >> 8);
-    machine_code[codeIndex+1] = cast(ubyte)(addr & 0x00FF);
+    // Little endian architecture
+    machine_code[codeIndex] = cast(ubyte)(addr & 0x00FF);
+    machine_code[codeIndex+1] = cast(ubyte)(addr >> 8);
   }
 
   // Relative branch offsets
@@ -182,7 +225,7 @@ void main()
       exit(1);
     }
     ushort addr = labelToAddr[label];
-    int offset = addr - (org + codeIndex);
+    int offset = addr - 1 - (org + codeIndex);
     assert((offset >= -128) && (offset <= 127));
     machine_code[codeIndex] = cast(ubyte)offset;
   }
@@ -199,5 +242,26 @@ void main()
     assert(addr < 256);
     machine_code[codeIndex] = cast(ubyte)addr;
   }
-  writeln(machine_code);
+
+  outputAppleIISystemMonitorInput(machine_code, org);
+}
+
+void outputAppleIISystemMonitorInput(const ubyte[] code, ushort org)
+{
+  int byteNum = 0;
+  ushort loadAddr = org;
+  string loadAddrHex;
+  foreach (ubyte b; code)
+  {
+    if (byteNum % 83 == 0)
+    {
+      loadAddrHex = byteToHex(cast(ubyte)(loadAddr >> 8)) ~ byteToHex(cast(ubyte)(loadAddr & 0x00FF));
+      while (loadAddrHex[0] == '0') loadAddrHex = loadAddrHex[1..$];
+      if (byteNum > 0) writeln();
+      writef("%s:", loadAddrHex);
+      loadAddr += 83;
+    }
+    writef("%s ", byteToHex(b));
+    byteNum++;
+  }
 }
