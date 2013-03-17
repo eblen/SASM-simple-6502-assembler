@@ -162,7 +162,9 @@ public int numbytes(string mnemonic)
     case 'i': return 2;
     case 'z': return 2;
     case 'a': return 3;
-    case 'n': return 2;
+    case 'n':
+      if (mnemonic == "jmpn") return 3;
+      else return 2;
     default: throw new InvalidFlagException("Invalid Flag " ~ mnem[3]);
   }
 }
@@ -175,7 +177,6 @@ public string mnemonic(opcode oc)
   return opcodemap[oc];
 }
 
-// TODO: See if there is an automatic way of doing this on program startup
 public void init6502()
 {
   initopinfo();

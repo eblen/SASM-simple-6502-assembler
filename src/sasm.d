@@ -167,7 +167,6 @@ void main()
       }
 
       // op1 is a label
-      // TODO: Handle indirect offsets
       else
       {
         ushort codeIndex = cast(ushort)(machine_code.length);
@@ -180,8 +179,17 @@ void main()
             machine_code ~= 0;
             break;
           case ADDR_TYPE.IND:
-            writefln("Error - indirect addressing mode not yet supported at line %s", line_num);
-            exit(1);
+            if (mnemonic == "jmpn")
+            {
+              absAddrRef[codeIndex] = label;
+              machine_code ~= 0;
+              machine_code ~= 0;
+            }
+            else
+            {
+              zpAddrRef[codeIndex] = label;
+              machine_code ~= 0;
+            }
             break;
           case ADDR_TYPE.NONE:
             writefln("Error - label not applicable for instruction at line %s", line_num);
@@ -256,7 +264,7 @@ void outputAppleIISystemMonitorInput(const ubyte[] code, ushort org)
     if (byteNum % 83 == 0)
     {
       loadAddrHex = byteToHex(cast(ubyte)(loadAddr >> 8)) ~ byteToHex(cast(ubyte)(loadAddr & 0x00FF));
-      while (loadAddrHex[0] == '0') loadAddrHex = loadAddrHex[1..$];
+      while ((loadAddrHex.length > 1) && (loadAddrHex[0] == '0')) loadAddrHex = loadAddrHex[1..$];
       if (byteNum > 0) writeln();
       writef("%s:", loadAddrHex);
       loadAddr += 83;
