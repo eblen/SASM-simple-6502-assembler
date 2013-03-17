@@ -100,9 +100,9 @@ class InvalidFlagException : InvalidMnemonicException {this(string s) {super(s);
 class InvalidInstrException : InvalidMnemonicException {this(string s) {super(s);}}
 class InvalidOpcodeException : Exception {this(string s) {super(s);}}
 
-// Return hex code as 2-character string for given mnemonic
+// Return ubyte for given mnemonic
 // Throws InvalidMnemonicException on bad input
-public string hexcode(string mnemonic)
+public ubyte bytecode(string mnemonic)
 {
   if (mnemonic.length < 3) throw new InvalidMnemonicException("Mnemonic too short " ~ mnemonic);
   if (mnemonic.length > 5) throw new InvalidMnemonicException("Mnemonic too long " ~ mnemonic);
@@ -128,9 +128,7 @@ public string hexcode(string mnemonic)
         throw new InvalidMnemonicException("Invalid mnemonic - instruction " ~ instr ~ " requires flags");
   }
 
-  string retVal;
-  writef(retVal, "%2X", info.codemap[flag]);
-  return retVal;
+  return info.codemap[flag];
 }
 
 // Return address type of the given mnemonic
