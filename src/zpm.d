@@ -3,13 +3,13 @@
 
 import proc6502;
 
+class ZeroPageAllocationException : Exception {this(string s) {super(s);}}
+
 interface ZeroPageManager
 {
   final ubyte alloc() {return alloc(1);}
   ubyte alloc(ubyte size);
 }
-
-// TODO: Add error checking for bad size value and for memory exhaustion.
 
 // Apple II system-level programs, like the monitor and DOS, use the lower addresses first and leave the higher addresses for user
 // programs. Thus, this simple manager usually works fine. It allocates bytes in order from high to low memory.
@@ -25,6 +25,10 @@ class SimpleAppleIIZeroPageManager : ZeroPageManager
   override ubyte alloc(ubyte size)
   {
     assert(size > 0);
+    if (size > next_free_byte)
+    {
+      throw new ZeroPageAllocationException("Zero page memory exhausted.");
+    }
     next_free_byte -= size;
     return cast(ubyte)(next_free_byte + 1);
   }
