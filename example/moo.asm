@@ -115,26 +115,26 @@ asl
 ; Store digit maps - need to borrow x
 stxz  .tmp0
 tax
-ldaax .digit_maps ; lda &DIGIT_MAPS,x
-staz  .shapemap0 ; sta &'SHAPEMAP0
-inx   ; inx
-ldaax .digit_maps ; lda &DIGIT_MAPS,x
-staz  .shapemap1 ; sta &'SHAPEMAP1
-ldxz  .tmp0 ; ldx &'TMP0
+ldaax .digit_maps
+staz  .shapemap0
+inx  
+ldaax .digit_maps
+staz  .shapemap1
+ldxz  .tmp0
 
 ; Now actually draw shape
-txa   ; txa
-jsra  .draw_shape ; jsr &DRAW_SHAPE
+txa  
+jsra  .draw_shape
 
 ; increment y to next digit position
-iny   ; iny
-iny   ; iny
-iny   ; iny
-iny   ; iny
+iny  
+iny  
+iny  
+iny  
 
 ; Restart if we are still in the middle of a row
-cpyz  .row_limit ; cpy &'ROW_LIMIT
-bne   .enter_digit ; bne #ENTER_DIGIT
+cpyz  .row_limit
+bne   .enter_digit
 
 ; Draw key information
 ; First set colors correctly - need to borrow x and y
@@ -142,113 +142,113 @@ jsra  .save_regs
 
 ; Need to tally number of cows (TMP2), bulls (TMP1), and sheep (TMP0)
 ; (TMP0 not actually read but is written.)
-ldai  00 ; lda #0
-staz  .tmp1 ; sta &'TMP1
-staz  .tmp2 ; sta &'TMP2
-ldyi  03 ; ldy #3
+ldai  00
+staz  .tmp1
+staz  .tmp2
+ldyi  03
 .tally_loop
-ldai  00 ; lda #0
-rorz  .key ; ror &'KEY
-adci  00 ; adc #0
-rorz  .key ; ror &'KEY
-adci  00 ; adc #0
-tax   ; tax
-inczx .tmp0 ; inc &'TMP0,x
-dey   ; dey
-bpl   .tally_loop ; bpl #TALLY_LOOP
+ldai  00
+rorz  .key
+adci  00
+rorz  .key
+adci  00
+tax  
+inczx .tmp0
+dey  
+bpl   .tally_loop
 
 ; Now change pixel colors
-ldai  0c ; lda 0C
-staz  .tmp3 ; sta &'TMP3 
-ldxi  03 ; ldx #3
+ldai  0c
+staz  .tmp3
+ldxi  03
 .next_key_pixel
-decz  .tmp2 ; dec &'TMP2
-bmi   .not_cow ; bmi #NOT_COW
-ldyi  02 ; ldy #2
-bne   .change_pixel ; bne #CHANGE_PIXEL
+decz  .tmp2
+bmi   .not_cow
+ldyi  02
+bne   .change_pixel
 .not_cow
-decz  .tmp1 ; dec &'TMP1
-bmi   .not_bull ; bmi #NOT_BULL
-ldyi  01 ; ldy #1
-bne   .change_pixel ; bne #CHANGE_PIXEL
+decz  .tmp1
+bmi   .not_bull
+ldyi  01
+bne   .change_pixel
 .not_bull
-ldyi  00 ; ldy #0
+ldyi  00
 .change_pixel
-ldaay .key_colors ; lda &KEY_COLORS,y
-staz  30 ; sta 30
-ldaz  .tmp3 ; lda &'TMP3
-jsra  .change_pixel_color ; jsr &CHANGE_PIXEL_COLOR
-sec   ; sec
-sbci  03 ; sbc #3
-staz  .tmp3 ; sta &'TMP3
-dex   ; dex
-bpl   .next_key_pixel ; bpl #NEXT_KEY_PIXEL
+ldaay .key_colors
+staz  30
+ldaz  .tmp3
+jsra  .change_pixel_color
+sec  
+sbci  03
+staz  .tmp3
+dex  
+bpl   .next_key_pixel
 jsra  .restore_regs
 
 ; Next store key map
-ldai  12 ; lda 12
-staz  .shapemap0 ; sta &'SHAPEMAP0
-ldai  48 ; lda 48
-staz  .shapemap1 ; sta &'SHAPEMAP1
+ldai  12
+staz  .shapemap0
+ldai  48
+staz  .shapemap1
 
 ; Now actually draw key
-txa   ; txa
-jsra  .draw_shape ; jsr &DRAW_SHAPE
+txa  
+jsra  .draw_shape
 
 ; Finally restore original colors
-ldai  66 ; lda 66
-staz  30 ; sta 30
-ldai  0c ; lda 0C
-jsra  .change_pixel_color ; jsr &CHANGE_PIXEL_COLOR
-ldai  09 ; lda 09
-jsra  .change_pixel_color ; jsr &CHANGE_PIXEL_COLOR
-ldai  06 ; lda 06
-jsra  .change_pixel_color ; jsr &CHANGE_PIXEL_COLOR
-ldai  03 ; lda 03
-jsra  .change_pixel_color ; jsr &CHANGE_PIXEL_COLOR
+ldai  66
+staz  30
+ldai  0c
+jsra  .change_pixel_color
+ldai  09
+jsra  .change_pixel_color
+ldai  06
+jsra  .change_pixel_color
+ldai  03
+jsra  .change_pixel_color
 ; End drawing of key information
 
 ; Increment x to next column
-inx   ; inx
-inx   ; inx
-inx   ; inx
-inx   ; inx
-inx   ; inx
-inx   ; inx
+inx  
+inx  
+inx  
+inx  
+inx  
+inx  
 
 ; Goto next column if we are at the bottom of the screen
-cpxz  .column_limit ; cpx &'COLUMN_LIMIT
-beq   .finish_column ; beq #FINISH_COLUMN
+cpxz  .column_limit
+beq   .finish_column
 
 ; Otherwise, reset y and restart
-tya   ; tya
-sec   ; sec
-sbci  10 ; sbc #16
-tay   ; tay
-jmpa  .enter_digit ; jmp @ENTER_DIGIT
+tya  
+sec  
+sbci  10
+tay  
+jmpa  .enter_digit
 
 .finish_column
 ; Return if this is the second column
-cpyi  26 ; cpy #38
-bne   .next_column ; bne #NEXT_COLUMN
-rts   ; rts
+cpyi  26
+bne   .next_column
+rts  
 
 ; Reset x and y for second column
 .next_column
-txa   ; txa
-sec   ; sec
-sbci  24 ; sbc #36
-tax   ; tax
-tya   ; tya
-clc   ; clc
-adci  05 ; adc #5
-tay   ; tay
+txa  
+sec  
+sbci  24
+tax  
+tya  
+clc  
+adci  05
+tay  
 ; Also adjust horizontal extent
-ldai  26 ; lda #38
-staz  .row_limit ; sta &'ROW_LIMIT
+ldai  26
+staz  .row_limit
 
 ; Always restart
-jmpa  .enter_digit ; jmp @ENTER_DIGIT
+jmpa  .enter_digit
 
 ; Subroutine to draw a 3x5 shape in lo-res graphics
 ; Input: A,Y - column and row of top-left corner of graphic
@@ -262,121 +262,121 @@ jmpa  .enter_digit ; jmp @ENTER_DIGIT
 jsra  .save_regs
 
 ; Store column in x
-tax   ; tax
+tax  
 
 ; Store row + 5 in TMP0
-clc   ; clc
-adci  05 ; adc #5
-staz  .tmp0 ; sta @TMP0
+clc  
+adci  05
+staz  .tmp0
 
 ; Store column + 3 in TMP1
-tya   ; tya
-adci  03 ; adc #3
-staz  .tmp1 ; sta @TMP1
+tya  
+adci  03
+staz  .tmp1
 
 ; Store color index in TMP2
-ldai  00 ; lda #0
-staz  .tmp2 ; sta &'TMP2
+ldai  00
+staz  .tmp2
 
 ; Main Loop
 .draw_row
 ; Plot if bit 15 in map is set
-aslz  .shapemap0 ; asl @SHAPEMAP0
-bcc   .no_plot ; bcc @NO_PLOT
+aslz  .shapemap0
+bcc   .no_plot
 
 ; Set color value - need to borrow x
-stxz  .tmp3 ; stx &'TMP3
+stxz  .tmp3
 
 ; Load correct color byte
-ldaz  .tmp2 ; lda &'TMP2
-lsr   ; lsr
-tax   ; tax
-ldazx .color ; lda &'COLOR,x
+ldaz  .tmp2
+lsr  
+tax  
+ldazx .color
 
 ; Create correct color value in A - borrow TMP4
-staz  .tmp4 ; sta &'TMP4
-bcs   .take_left ; bcs #TAKE_LEFT
+staz  .tmp4
+bcs   .take_left
 
 ; Color value is in right nibble - duplicate on left
-aslz  .tmp4 ; asl &'TMP4
-aslz  .tmp4 ; asl &'TMP4
-aslz  .tmp4 ; asl &'TMP4
-aslz  .tmp4 ; asl &'TMP4
-andi  0f ; and 0F
-oraz  .tmp4 ; ora &'TMP4
+aslz  .tmp4
+aslz  .tmp4
+aslz  .tmp4
+aslz  .tmp4
+andi  0f
+oraz  .tmp4
 
 ; Color value is in left nibble - duplicate on right
 .take_left
-lsrz  .tmp4 ; lsr &'TMP4
-lsrz  .tmp4 ; lsr &'TMP4
-lsrz  .tmp4 ; lsr &'TMP4
-lsrz  .tmp4 ; lsr &'TMP4
-andi  f0 ; and F0
-oraz  .tmp4 ; ora &'TMP4
+lsrz  .tmp4
+lsrz  .tmp4
+lsrz  .tmp4
+lsrz  .tmp4
+andi  f0
+oraz  .tmp4
 
 ; Store color value and restore x
-staz  30 ; sta 30
-ldxz  .tmp3 ; ldx &'TMP3 
+staz  30
+ldxz  .tmp3
 
-txa   ; txa
+txa  
 jsra  .save_regs2
-jsra  00f8 ; jsr plot routine
+jsra  00f8
 jsra  .restore_regs2
 .no_plot
-incz  .tmp2 ; inc &'TMP2
+incz  .tmp2
 
 ; Finish double byte shift
-aslz  .shapemap1 ; asl @SHAPEMAP1
-bcc   .no_carry ; bcc @NO_CARRY
-incz  .shapemap0 ; inc @SHAPEMAP0
+aslz  .shapemap1
+bcc   .no_carry
+incz  .shapemap0
 .no_carry
 
 ; Resume if we are in the middle of a row
-iny   ; iny
-cpyz  .tmp1 ; cpy @TMP1
-bne   .draw_row ; bne @DRAW_ROW
+iny  
+cpyz  .tmp1
+bne   .draw_row
 
 ; Check if we have finished. If so, go ahead and return
-inx   ; inx
-cpxz  .tmp0 ; cpx @TMP0
-bne   .not_done ; bne @NOT_DONE
+inx  
+cpxz  .tmp0
+bne   .not_done
 
 jsra  .restore_regs
-rts   ; rts
+rts  
 
 ; Reset y for the next row
 .not_done
-dey   ; dey
-dey   ; dey
-dey   ; dey
-jmpa  .draw_row ; jmp @DRAW_ROW
+dey  
+dey  
+dey  
+jmpa  .draw_row
 
 .change_pixel_color
 ; Input: A - pixel index
 ; Input: $0030 - color value
 ; Changes global COLOR array
 jsra  .save_regs2 ; 2 because caller also saves regs - yes, this is poor design!
-lsr   ; lsr
-tax   ; tax
-ldazx .color ; lda &'COLOR,x
-bcs   .keep_right_color ; bcs #KEEP_RIGHT_COLOR
-andi  f0 ; and F0
-stazx .color ; sta &'COLOR,x
-ldaz  30 ; lda 30
-andi  0f ; and 0F
-orazx .color ; ora &'COLOR,x
-stazx .color ; sta &'COLOR,x
-jmpa  .end_change_pixel_color ; jmp &END_CHANGE_PIXEL_COLOR
+lsr  
+tax  
+ldazx .color
+bcs   .keep_right_color
+andi  f0
+stazx .color
+ldaz  30
+andi  0f
+orazx .color
+stazx .color
+jmpa  .end_change_pixel_color
 .keep_right_color
-andi  0f ; and 0F
-stazx .color ; sta &'COLOR,x
-ldaz  30 ; lda 30
-andi  f0 ; and F0
-orazx .color ; ora &'COLOR,x
-stazx .color ; sta &'COLOR,x
+andi  0f
+stazx .color
+ldaz  30
+andi  f0
+orazx .color
+stazx .color
 .end_change_pixel_color
 jsra  .restore_regs2
-rts   ; rts
+rts  
 
 ; Linear Congruential Random Number Generator
 ; Formula is x = (3x+13) mod 256
@@ -385,26 +385,26 @@ rts   ; rts
 ; Only A is altered
 .random_digit
 ; RNG Algorithm
-ldaz  .random ; lda &'RANDOM
-clc   ; clc
-adcz  .random ; adc &'RANDOM
-clc   ; clc
-adcz  .random ; adc &'RANDOM
-clc   ; clc
-adci  0d ; adc #13
-staz  .random ; sta &'RANDOM
+ldaz  .random
+clc  
+adcz  .random
+clc  
+adcz  .random
+clc  
+adci  0d
+staz  .random
 
 ; Use random number to get a digit 0-9
-cmpi  fa ; cmp 250 
-bcs   .random_digit ; bcs #RANDOM_DIGIT
+cmpi  fa
+bcs   .random_digit
 .sub_10
-cmpi  0a ; cmp 10
-bcc   .random_digit_end ; bcc #RANDOM_DIGIT_END
-sec   ; sec
-sbci  0a ; sbc 10
-bne   .sub_10 ; bne #SUB_10 
+cmpi  0a
+bcc   .random_digit_end
+sec  
+sbci  0a
+bne   .sub_10
 .random_digit_end
-rts   ; rts
+rts  
 
 ; Digit shape maps
 .digit_maps
@@ -429,29 +429,29 @@ zbyte xreg
 zbyte yreg
 
 .save_regs
-staz  .areg ; sta &'AREG
-stxz  .xreg ; stx &'XREG
-styz  .yreg ; sty &'YREG
-rts   ; rts
+staz  .areg
+stxz  .xreg
+styz  .yreg
+rts
 
 .restore_regs
-ldaz  .areg ; lda &'AREG
-ldxz  .xreg ; ldx &'XREG
-ldyz  .yreg ; ldy &'YREG
-rts   ; rts
+ldaz  .areg
+ldxz  .xreg
+ldyz  .yreg
+rts
 
 zbyte areg2
 zbyte xreg2
 zbyte yreg2
 
 .save_regs2
-staz  .areg2 ; sta &'AREG2
-stxz  .xreg2 ; stx &'XREG2
-styz  .yreg2 ; sty &'YREG2
-rts   ; rts
+staz  .areg2
+stxz  .xreg2
+styz  .yreg2
+rts
 
 .restore_regs2
-ldaz  .areg2 ; lda &'AREG2
-ldxz  .xreg2 ; ldx &'XREG2
-ldyz  .yreg2 ; ldy &'YREG2
-rts   ; rts
+ldaz  .areg2
+ldxz  .xreg2
+ldyz  .yreg2
+rts
