@@ -1,0 +1,14 @@
+TODO
+
+1) Support binary and decimal number formats.
+2) Support other systems and output formats.
+3) Support equates and other types of aliasing.
+4) Create more and bigger example games, especially one using hi-res graphics.
+5) Improve moo example game
+   a) Sound effects.
+   b) End game when player correctly guesses number.
+   c) Start with something besides a blank screen.
+6) Fix problems in the moo example game
+   a) Get rid of non-portable allocation of TMP values
+   b) Find a nicer way to stash register values. For some reason, saving on the stack does not work.
+   c) Do not allow players to enter non-digits.

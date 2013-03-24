@@ -1,0 +1,33 @@
+The SASM assembler has a simple syntax that is based on the well-known syntax used by other 6502 assemblers. See the "moo.asm" program in the "examples" directory for a specific example.
+
+Comments are preceded with a semicolon. Unlike most other assemblers, there is no indenting of lines. Each opcode is 3-5 characters in length. The first three characters are the well-known opcodes for the 6502. One good reference is:
+
+http://www.6502.org/tutorials/6502opcodes.html
+
+The next two characters, if present, are modifiers. The fourth character can be one of:
+
+i: immediate mode
+z: zero-page address
+a: absolute address
+n: indirect address
+
+The fifth character indicates a register offset and is either 'x' or 'y' if present.
+
+Of course, not all instructions accept all modifiers. Some instructions, such as "tax" (transfer a to x), do not accept any modifiers. The assembler will print an error and refuse to compile for illegal mnemonics.
+
+Instructions may take an argument, which will either be a value or a label. Values are always hex with no additional markup. (So write "E6", not "0xE6".) In the future, support may be added for binary or decimal values. Labels are prepended with a '.' See below for more information on labels.
+
+Locations in the program can be labeled with a '.' followed by the label. For example, ".loop_begin" or ".subroutine1". These can then be used for branching instructions. Zero-byte addresses can also be labeled using a special command given below.
+
+Other assembler commands:
+
+1) data: indicates that the argument is simply data inserted into the program. The argument may be any even number of hex digits.
+
+2) org: Usually the first command in the program, which indicates where the program should be loaded into memory. The argument is 1-4 hex digits. If no "org" is present, it defaults to 0, which is generally not a good idea...
+
+3) zbyte: allocate one or more zero-page bytes. The first argument is mandatory and is a label for the memory. The optional second argument indicates the number of bytes to allocate (1 by default). Note that a '.' should not be used before the label for the zbyte command but must be used when the label is used in assembly instructions.
+
+NOTES
+* You are encouraged to use a fixed-format for the program, so that columns 0-4 are for the mnemonic and the argument starts at column 6, but this is not mandatory. At the moment, however, spaces are not allowed inside the mnemonic or argument. For example, "jmp 58fc" cannot be written as "jmp 58 fc".
+
+* Either uppercase or lowercase can be used for the mnemonics, addresses, and hex values.

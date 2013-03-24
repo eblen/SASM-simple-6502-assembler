@@ -1,0 +1,19 @@
+Currently, the only supported system, in terms of the output format and zero-byte allocation, is the Apple II using OpenEmulator:
+
+http://www.openemulator.org/
+
+The SASM assembler inputs a file in SASM assembler format and outputs it in a form suitable for the Apple II system monitor. Here is how to run the moo example program using OpenEmulator:
+
+1) Start OpenEmulator and select the "Apple II". This machine is easiest to use because it begins in the system monitor.
+2) Switch the monitor to the "Composite color monitor" since the game makes use of multiple colors.
+3) Compile the SASM assembler in the "src" directory using the dmd D compiler: "dmd sasm.d p6502.d zpm.d"
+4) Assemble the moo example program: "./sasm < ../example/moo.asm"
+5) Cut and paste the output to OpenEmulator. You should hear lots of beeps! (You may want to make sure the volume is turned down to avoid startling anyone around you.) Be sure to press enter to enter the last line of hex values to the system monitor.
+6) Type "A00G" and hit enter. The game should now start. You will only see a black screen, but you can now begin typing in 4-digit guesses.
+
+"A00G" is a system monitor command that tells the Apple II to jump to address "A00" and execute the code found there. "A00" is the address where the moo program is loaded (specified in the program with the "org a00" command).
+
+Congratulations! This should get you started writing programs for the Apple II in SASM! There are many references available online for learning the ins and outs of this wonderful machine.
+
+TIPS:
+1) Remember that the Apple II is a little-endian machine. So two-byte addresses must be reversed. For example, in the moo game the first two instructions call subroutines in high memory but note the format.

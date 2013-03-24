@@ -33,10 +33,10 @@ zbyte digit_index ; Indicated by bits 0 and 1 - ignore 2-7
 zbyte key
 zbyte random
 ; Allocate TMPs in reverse order so they will be consecutive
-; This is bad, bad, bad, because we are using hidden knowledge
-; about how the zero-page allocator works. It is desirable,
-; though, to have a set of tmps that are both consecutive and
-; that we can use directly without indexing.
+; This is bad because we are using hidden knowledge about
+; how the zero-page allocator works. It is desirable, though
+; to have a set of tmps that are both consecutive and that
+; we can use directly without indexing.
 zbyte tmp4
 zbyte tmp3
 zbyte tmp2
@@ -44,8 +44,8 @@ zbyte tmp1
 zbyte tmp0
 
 ; Initialization
-jsra  58fc
-jsra  40fb
+jsra  58fc ; clear screen
+jsra  40fb ; set to lo-res graphics mode
 
 ; Set colors to 6
 ldxi  07
