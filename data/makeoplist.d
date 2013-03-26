@@ -1,3 +1,5 @@
+#!/usr/local/dmd/bin/rdmd
+
 /********************************************************************
  SASM (Simple Assembler) for 6502 and related processors
  Copyright (C) 2013 John Eblen
@@ -17,8 +19,6 @@
  You should have received a copy of the GNU General Public License
  along with SASM.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-
-#!/usr/local/dmd/bin/rdmd
 
 import std.conv;
 import std.regex;
