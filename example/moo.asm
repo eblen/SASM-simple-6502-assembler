@@ -43,9 +43,13 @@ zbyte tmp2
 zbyte tmp1
 zbyte tmp0
 
+; Apple II System Subroutines
+label clear_screen fc58
+label set_lo_res_gr fb40
+
 ; Initialization
-jsra  58fc ; clear screen
-jsra  40fb ; set to lo-res graphics mode
+jsra  .clear_screen
+jsra  .set_lo_res_gr
 
 ; Set colors to 6
 ldxi  07

@@ -161,10 +161,22 @@ void main()
       labelToAddr[op1] = zpm.alloc(alloc_size);
     }
 
-    // Enforce that an "org" occurs before all other commands except "zbyte".
+    // Label an address
+    else if (mnemonic == "label")
+    {
+      if (op1 == "" || op2 == "")
+      {
+        writefln("Error - label requires two arguments at line %s", line_num);
+        exit(1);
+      }
+      while (op2.length < 4) op2 = "0" ~ op2;
+      labelToAddr[op1] = 256*hexToByte(op2[0..2]) + hexToByte(op2[2..$]);
+    }
+
+    // Enforce that an "org" occurs before all other commands except "label" and "zbyte".
     else if (code_blocks.length == 0)
     {
-      writeln("Error - org required before all other commands except zbyte");
+      writeln("Error - org required before all other commands except label and zbyte");
       exit(1);
     }
 

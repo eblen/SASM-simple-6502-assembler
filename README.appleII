@@ -16,4 +16,7 @@ The SASM assembler inputs a file in SASM assembler format and outputs it in a fo
 Congratulations! This should get you started writing programs for the Apple II in SASM! There are many references available online for learning the ins and outs of this wonderful machine.
 
 TIPS:
-1) Remember that the Apple II is a little-endian machine. So two-byte addresses must be reversed. For example, in the moo game the first two instructions call subroutines in high memory but note the format.
+1) Remember that the Apple II is a little-endian machine and so two-byte addresses must be reversed. Use the "label" command to label common subroutines and other addresses to avoid this problem. For an example, see the two calls at the beginning of the moo example program. If labels were not used, they would be:
+
+jsra  58fc ; clear screen
+jsra  40fb ; set to lo-res graphics mode

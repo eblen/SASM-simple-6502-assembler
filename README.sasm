@@ -23,9 +23,11 @@ Other assembler commands:
 
 1) data: indicates that the argument is simply data inserted into the program. The argument may be any even number of hex digits.
 
-2) org: Usually the first command in the program, which indicates where the program should be loaded into memory. The argument is 1-4 hex digits. An org command must be present before all other commands except zbyte. Multiple org commands are allowed for defining multiple code segments.
+2) label: assign a label (argument 1) to an address (argument 2). Note that a '.' should not be used before the label in this command but must be used when the label is used in assembly instructions.
 
-3) zbyte: allocate one or more zero-page bytes. The first argument is mandatory and is a label for the memory. The optional second argument indicates the number of bytes to allocate (1 by default). Note that a '.' should not be used before the label for the zbyte command but must be used when the label is used in assembly instructions.
+3) org: Usually the first command in the program, which indicates where the program should be loaded into memory. The argument is 1-4 hex digits. An org command must be present before all other commands except label and zbyte. Multiple org commands are allowed for defining multiple code segments.
+
+4) zbyte: allocate one or more zero-page bytes. The first argument is mandatory and is a label for the memory. The optional second argument indicates the number of bytes to allocate (1 by default). Like the "label" command, note that a '.' should not be used before the label for the zbyte command but must be used when the label is used in assembly instructions.
 
 NOTES
 * You are encouraged to use a fixed-format for the program, so that columns 0-4 are for the mnemonic and the argument starts at column 6, but this is not mandatory. At the moment, however, spaces are not allowed inside the mnemonic or argument. For example, "jmp 58fc" cannot be written as "jmp 58 fc".
