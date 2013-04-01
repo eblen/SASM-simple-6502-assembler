@@ -21,6 +21,7 @@
 import std.algorithm;
 import std.c.stdlib;
 import std.conv;
+import std.getopt;
 import std.stdio;
 import std.string;
 import proc6502;
@@ -64,7 +65,7 @@ struct code_seg
   string[ushort] zpAddrRef;
 }
 
-void main()
+void main(string[] args)
 {
   hex2val =
   [
@@ -106,13 +107,30 @@ void main()
     15:'f',
   ];
 
+  // Process command-line arguments
+  enum MLformat {appleSM, bin};
+  MLformat output_format = MLformat.appleSM;
+  try
+  {
+    getopt(
+      args,
+      "format|f", &output_format);
+  } catch (ConvException e) {
+    writeln("Invalid arguments on command line");
+    exit(1);
+  }
+
+  // Initialization
+  init6502();
+
   code_seg[] code_blocks;
   ushort[string] labelToAddr;
   auto zpm = new SimpleAppleIIZeroPageManager();
 
-  init6502();
   code_seg* cs = null;
   int line_num = 1;
+
+  // Main loop
   foreach(char[] line; stdin.byLine())
   {
     scope(exit) line_num++;
@@ -303,10 +321,19 @@ void main()
     }
   }
   sort!("a.org < b.org")(code_blocks);
-  outputAppleIISystemMonitorInput(code_blocks);
+
+  final switch(output_format)
+  {
+    case MLformat.appleSM:
+      outputAppleIISystemMonitorFormat(code_blocks);
+      break;
+    case MLformat.bin:
+      outputBinaryFormat(code_blocks);
+      break;
+  }
 }
 
-void outputAppleIISystemMonitorInput(in code_seg[] code_blocks)
+void outputAppleIISystemMonitorFormat(in code_seg[] code_blocks)
 {
   foreach (const code_seg cs; code_blocks)
   {
@@ -327,5 +354,34 @@ void outputAppleIISystemMonitorInput(in code_seg[] code_blocks)
       byteNum++;
     }
     writeln();
+  }
+}
+
+void outputBinaryFormat(in code_seg[] code_blocks)
+{
+  const ubyte[1] filler = [0xff];
+  for (int i=0; i<code_blocks.length; i++)
+  {
+    // Check that code block is not too long
+    ulong next_addr = code_blocks[i].org + code_blocks[i].code.length;
+    if (next_addr > 0x10000)
+    {
+      writefln("Error - code section org %x too large for 64k memory", code_blocks[i].org);
+      exit(1);
+    }
+
+    // Write code block
+    stdout.rawWrite(code_blocks[i].code);
+
+    // Write filler bytes to next code block
+    if (i < code_blocks.length-1)
+    {
+      if (next_addr > code_blocks[i+1].org)
+      {
+        writefln("Error - code sections org %x and org %x overlap", code_blocks[i].org, code_blocks[i+1].org);
+        exit(1);
+      }
+      for (; next_addr < code_blocks[i+1].org; next_addr++) stdout.rawWrite(filler);
+    }
   }
 }
