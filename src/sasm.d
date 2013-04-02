@@ -108,13 +108,13 @@ void main(string[] args)
   ];
 
   // Process command-line arguments
-  enum MLformat {appleSM, bin};
-  MLformat output_format = MLformat.appleSM;
+  enum System {appleII, atari2600};
+  System system = System.appleII;
   try
   {
     getopt(
       args,
-      "format|f", &output_format);
+      "system|s", &system);
   } catch (ConvException e) {
     writeln("Invalid arguments on command line");
     exit(1);
@@ -125,7 +125,16 @@ void main(string[] args)
 
   code_seg[] code_blocks;
   ushort[string] labelToAddr;
-  auto zpm = new SimpleAppleIIZeroPageManager();
+  ZeroPageManager zpm;
+  final switch(system)
+  {
+    case System.appleII:
+      zpm = new SimpleAppleIIZeroPageManager();
+      break;
+    case System.atari2600:
+      zpm = new Atari2600ZeroPageManager();
+      break;
+  }
 
   code_seg* cs = null;
   int line_num = 1;
@@ -322,12 +331,12 @@ void main(string[] args)
   }
   sort!("a.org < b.org")(code_blocks);
 
-  final switch(output_format)
+  final switch(system)
   {
-    case MLformat.appleSM:
+    case System.appleII:
       outputAppleIISystemMonitorFormat(code_blocks);
       break;
-    case MLformat.bin:
+    case System.atari2600:
       outputBinaryFormat(code_blocks);
       break;
   }
