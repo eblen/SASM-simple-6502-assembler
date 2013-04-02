@@ -56,3 +56,29 @@ class SimpleAppleIIZeroPageManager : ZeroPageManager
   private:
   ubyte next_free_byte;
 }
+
+// The upper half of zero page (0x80 - 0xff) is the ONLY memory, zero-page or otherwise, that Atari 2600 programmers have available.
+// Furthermore, the stack is mapped to zero page as well! The stack normally starts at ff and grows down, which means that the
+// lower addresses should be preferred. Accordingly, this manager allocates memory in order from 0x80 to 0xff
+class Atari2600ZeroPageManager : ZeroPageManager
+{
+  this()
+  {
+    next_free_byte = 0x80;
+  }
+
+  override ubyte alloc(ubyte size)
+  {
+    assert(size > 0);
+    if (next_free_byte + size > 0x100)
+    {
+      throw new ZeroPageAllocationException("Zero page memory exhausted.");
+    }
+    ubyte ret_byte = cast(ubyte)(next_free_byte);
+    next_free_byte += size;
+    return ret_byte;
+  }
+
+  private:
+  int next_free_byte;
+}
