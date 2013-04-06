@@ -1,6 +1,8 @@
-Currently, the only supported system, in terms of the output format and zero-byte allocation, is the Apple II using OpenEmulator:
+SASM supports creating and running Apple II programs using OpenEmulator:
 
 http://www.openemulator.org/
+
+No command-line arguments are required, because the Apple II is the default system. You can use "-s appleII" if you like, though.
 
 The SASM assembler inputs a file in SASM assembler format and outputs it in a form suitable for the Apple II system monitor. Here is how to run the moo example program using OpenEmulator:
 
