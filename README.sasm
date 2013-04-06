@@ -21,7 +21,7 @@ Locations in the program can be labeled with a '.' followed by the label. For ex
 
 Other assembler commands:
 
-1) data: indicates that the argument is simply data inserted into the program. The argument may be any even number of hex digits.
+1) data: indicates that the argument is simply data inserted into the program. The argument may be any even number of hex digits or a label, which indicates that the two-byte address itself should be inserted (useful for defining interrupt vectors, for example).
 
 2) label: assign a label (argument 1) to an address (argument 2). Note that a '.' should not be used before the label in this command but must be used when the label is used in assembly instructions.
 
