@@ -210,14 +210,33 @@ void main(string[] args)
     // Raw data
     else if (mnemonic == "data")
     {
-      if (op1.length % 2 == 1)
+      if (op1 == "")
       {
-        writefln("Invalid data at line %s", line_num);
+        writefln("Error - data command requires arguments at line %s", line_num);
         exit(1);
       }
-      for (int i=0; i<op1.length; i += 2)
+
+      // Label
+      if (op1[0] == '.')
       {
-        cs.code ~= hexToByte(op1[i..i+2]);
+        ushort codeIndex = cast(ushort)(cs.code.length);
+        cs.absAddrRef[codeIndex] = op1[1..$];
+        cs.code ~= 0;
+        cs.code ~= 0;
+      }
+
+      // Raw bytes
+      else
+      {
+        if (op1.length % 2 == 1)
+        {
+          writefln("Invalid data at line %s", line_num);
+          exit(1);
+        }
+        for (int i=0; i<op1.length; i += 2)
+        {
+          cs.code ~= hexToByte(op1[i..i+2]);
+        }
       }
     }
 
