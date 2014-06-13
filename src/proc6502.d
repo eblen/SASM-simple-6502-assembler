@@ -197,6 +197,7 @@ public string mnemonic(opcode oc)
   return opcodemap[oc];
 }
 
+// Initialize 6502 data. This function must be called before calling other functions in this module.
 public void init6502()
 {
   initopinfo();
