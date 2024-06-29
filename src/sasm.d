@@ -19,7 +19,7 @@
 *********************************************************************/
 
 import std.algorithm;
-import std.c.stdlib;
+import core.stdc.stdlib;
 import std.conv;
 import std.getopt;
 import std.stdio;
@@ -35,7 +35,7 @@ static char[ubyte] val2hex;
 ubyte hexToByte(string hex)
 {
   if (hex.length != 2) throw new InvalidHexNumberException(to!string(hex));
-  char hex_char[2];
+  char[2] hex_char;
   hex_char[0] = hex[0];
   hex_char[1] = hex[1];
   return hexToByte(hex_char);
