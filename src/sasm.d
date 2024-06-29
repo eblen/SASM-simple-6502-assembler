@@ -63,6 +63,7 @@ struct code_seg
   string[ushort] absAddrRef;
   string[ushort] relAddrRef;
   string[ushort] zpAddrRef;
+  ubyte[ushort]  addrRefOffset;
 }
 
 void main(string[] args)
@@ -300,6 +301,17 @@ void main(string[] args)
             cs.code ~= 0;
             break;
         }
+
+        if (op2 != "")
+        {
+          if (op2.length > 2)
+          {
+            writefln("Error - address offset must be <= FF at line %s", line_num);
+            exit(1);
+          }
+          if (op2.length == 1) op2 = "0" ~ op2;
+          cs.addrRefOffset[codeIndex] = hexToByte(op2[0..2]);
+        }
       }
     }
   }
@@ -316,6 +328,7 @@ void main(string[] args)
         exit(1);
       }
       ushort addr = labelToAddr[label];
+      if (codeIndex in cs.addrRefOffset) addr += cs.addrRefOffset[codeIndex];
       // Little endian architecture
       cb.code[codeIndex] = cast(ubyte)(addr & 0x00FF);
       cb.code[codeIndex+1] = cast(ubyte)(addr >> 8);
@@ -330,6 +343,7 @@ void main(string[] args)
         exit(1);
       }
       ushort addr = labelToAddr[label];
+      if (codeIndex in cs.addrRefOffset) addr += cs.addrRefOffset[codeIndex];
       int offset = addr - 1 - (cb.org + codeIndex);
       assert((offset >= -128) && (offset <= 127));
       cb.code[codeIndex] = cast(ubyte)offset;
@@ -344,6 +358,7 @@ void main(string[] args)
         exit(1);
       }
       ushort addr = labelToAddr[label];
+      if (codeIndex in cs.addrRefOffset) addr += cs.addrRefOffset[codeIndex];
       assert(addr < 256);
       cb.code[codeIndex] = cast(ubyte)addr;
     }
