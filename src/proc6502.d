@@ -161,7 +161,8 @@ public ADDR_TYPE addrtype(string mnemonic)
   if (mnem.length < 4) return ADDR_TYPE.NONE;
   switch(mnem[3])
   {
-    case 'i': return ADDR_TYPE.NONE;
+    case 'i': return ADDR_TYPE.ZP; // Allows labeling of constant values that
+                                   // are not actually zero-page addresses.
     case 'z': return ADDR_TYPE.ZP;
     case 'a': return ADDR_TYPE.ABS;
     case 'n': return ADDR_TYPE.IND;
