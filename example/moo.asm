@@ -32,16 +32,7 @@ zbyte digit 4
 zbyte digit_index ; Indicated by bits 0 and 1 - ignore 2-7
 zbyte key
 zbyte random
-; Allocate TMPs in reverse order so they will be consecutive
-; This is bad because we are using hidden knowledge about
-; how the zero-page allocator works. It is desirable, though
-; to have a set of tmps that are both consecutive and that
-; we can use directly without indexing.
-zbyte tmp4
-zbyte tmp3
-zbyte tmp2
-zbyte tmp1
-zbyte tmp0
+zbyte tmp 5
 
 ; Apple II System Subroutines
 label clear_screen fc58
@@ -86,9 +77,9 @@ staz  .digit_index
 ; Read keyboard input
 jsra  .save_regs
 jsra  35fd
-staz  .tmp0
+staz  .tmp
 jsra  .restore_regs
-ldaz  .tmp0
+ldaz  .tmp
 
 ; Compute entered number (0-9)
 sec
@@ -99,7 +90,7 @@ sbci  b0
 ; Two bits per key value as follows:
 ; cow: 11 bull: 10 sheep: 00
 jsra  .save_regs
-staz  .tmp0
+staz  .tmp
 
 ; If we have a cow, rotate 1 into KEY
 ; Otherwise, rotate 0 into KEY
@@ -107,7 +98,7 @@ ldaz  .digit_index
 andi  03
 tax
 ldazx .digit
-cmpz  .tmp0
+cmpz  .tmp
 clc
 bne   .no_cow
 sec
@@ -120,7 +111,7 @@ rorz  .key
 ldxi  03
 .digit_loop
 ldazx .digit
-cmpz  .tmp0
+cmpz  .tmp
 beq   .not_sheep
 dex
 bpl   .digit_loop
@@ -137,14 +128,14 @@ jsra  .restore_regs
 asl
 
 ; Store digit maps - need to borrow x
-stxz  .tmp0
+stxz  .tmp
 tax
 ldaax .digit_maps
 staz  .shapemap0
 inx  
 ldaax .digit_maps
 staz  .shapemap1
-ldxz  .tmp0
+ldxz  .tmp
 
 ; Now actually draw shape
 txa  
@@ -167,8 +158,8 @@ jsra  .save_regs
 ; Need to tally number of cows (TMP2), bulls (TMP1), and sheep (TMP0)
 ; (TMP0 not actually read but is written.)
 ldai  00
-staz  .tmp1
-staz  .tmp2
+staz  .tmp 1
+staz  .tmp 2
 ldyi  03
 .tally_loop
 ldai  00
@@ -177,21 +168,21 @@ adci  00
 rorz  .key
 adci  00
 tax  
-inczx .tmp0
+inczx .tmp
 dey  
 bpl   .tally_loop
 
 ; Now change pixel colors
 ldai  0c
-staz  .tmp3
+staz  .tmp 3
 ldxi  03
 .next_key_pixel
-decz  .tmp2
+decz  .tmp 2
 bmi   .not_cow
 ldyi  02
 bne   .change_pixel
 .not_cow
-decz  .tmp1
+decz  .tmp 1
 bmi   .not_bull
 ldyi  01
 bne   .change_pixel
@@ -200,11 +191,11 @@ ldyi  00
 .change_pixel
 ldaay .key_colors
 staz  30
-ldaz  .tmp3
+ldaz  .tmp 3
 jsra  .change_pixel_color
 sec  
 sbci  03
-staz  .tmp3
+staz  .tmp 3
 dex  
 bpl   .next_key_pixel
 jsra  .restore_regs
@@ -291,16 +282,16 @@ tax
 ; Store row + 5 in TMP0
 clc  
 adci  05
-staz  .tmp0
+staz  .tmp
 
 ; Store column + 3 in TMP1
 tya  
 adci  03
-staz  .tmp1
+staz  .tmp 1
 
 ; Store color index in TMP2
 ldai  00
-staz  .tmp2
+staz  .tmp 2
 
 ; Main Loop
 .draw_row
@@ -309,45 +300,45 @@ aslz  .shapemap0
 bcc   .no_plot
 
 ; Set color value - need to borrow x
-stxz  .tmp3
+stxz  .tmp 3
 
 ; Load correct color byte
-ldaz  .tmp2
+ldaz  .tmp 2
 lsr  
 tax  
 ldazx .color
 
 ; Create correct color value in A - borrow TMP4
-staz  .tmp4
+staz  .tmp 4
 bcs   .take_left
 
 ; Color value is in right nibble - duplicate on left
-aslz  .tmp4
-aslz  .tmp4
-aslz  .tmp4
-aslz  .tmp4
+aslz  .tmp 4
+aslz  .tmp 4
+aslz  .tmp 4
+aslz  .tmp 4
 andi  0f
-oraz  .tmp4
+oraz  .tmp 4
 
 ; Color value is in left nibble - duplicate on right
 .take_left
-lsrz  .tmp4
-lsrz  .tmp4
-lsrz  .tmp4
-lsrz  .tmp4
+lsrz  .tmp 4
+lsrz  .tmp 4
+lsrz  .tmp 4
+lsrz  .tmp 4
 andi  f0
-oraz  .tmp4
+oraz  .tmp 4
 
 ; Store color value and restore x
 staz  30
-ldxz  .tmp3
+ldxz  .tmp 3
 
 txa  
 jsra  .save_regs2
 jsra  00f8
 jsra  .restore_regs2
 .no_plot
-incz  .tmp2
+incz  .tmp 2
 
 ; Finish double byte shift
 aslz  .shapemap1
@@ -357,12 +348,12 @@ incz  .shapemap0
 
 ; Resume if we are in the middle of a row
 iny  
-cpyz  .tmp1
+cpyz  .tmp 1
 bne   .draw_row
 
 ; Check if we have finished. If so, go ahead and return
 inx  
-cpxz  .tmp0
+cpxz  .tmp
 bne   .not_done
 
 jsra  .restore_regs

@@ -9,6 +9,5 @@ TODO
    b) End game when player correctly guesses number.
    c) Start with something besides a blank screen.
 6) Fix problems in the moo example game
-   a) Get rid of non-portable allocation of TMP values
-   b) Find a nicer way to stash register values. For some reason, saving on the stack does not work.
-   c) Do not allow players to enter non-digits.
+   a) Find a nicer way to stash register values. For some reason, saving on the stack does not work.
+   b) Do not allow players to enter non-digits.
