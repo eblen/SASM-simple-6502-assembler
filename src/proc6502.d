@@ -157,7 +157,8 @@ public ADDR_TYPE addrtype(string mnemonic)
   if (mnemonic.length < 3) throw new InvalidMnemonicException("Mnemonic too short " ~ mnemonic);
   if (mnemonic.length > 5) throw new InvalidMnemonicException("Mnemonic too long " ~ mnemonic);
   string mnem = mnemonic.toLower();
-  if (mnem[0] == 'b' && mnem != "bit" && mnem != "brk") return ADDR_TYPE.REL;
+  // Instructions starting with 'b' are relative branches except for bit and brk
+  if (mnem[0] == 'b' && mnem[1] != 'i' && mnem != "brk") return ADDR_TYPE.REL;
   if (mnem.length < 4) return ADDR_TYPE.NONE;
   switch(mnem[3])
   {
